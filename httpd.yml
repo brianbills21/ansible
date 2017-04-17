@@ -1,0 +1,30 @@
+---
+- hosts: clientservers
+  remote_user: bbills
+  become: yes
+  become_method: su
+  tasks:
+  - name: Installing Latest version of Apache
+    yum: pkg=httpd state=latest
+  - name: Copying the demo file
+    template: src=/etc/ansible/index.html dest=/var/www/html
+              owner=apache group=apache mode=0644
+  - name: (Enable it on System Boot)
+    service: name=httpd enabled=yes
+    notify:
+    - start apache
+  handlers:
+    - name: start apache
+      service: name=httpd state=started
+
+vi /etc/ansible/index.html
+
+<html>
+  <head>
+    <title>Apache is installed by Ansible</title>
+  </head>
+  <body>
+  <h1>Apache is installed by Ansible</h1>
+  <p>Now, Apache is managed through Ansible</p>
+  </body>
+</html>
