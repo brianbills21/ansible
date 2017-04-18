@@ -10,7 +10,7 @@
     copy: src=/tmp/VMwareTools-10.1.6-5214329.tar.gz dest=/tmp/VMwareTools-10.1.6-5214329.tar.gz
   - name: Unarchive VMwareTools
     unarchive: src=/tmp/VMwareTools-10.1.6-5214329.tar.gz dest=/tmp
-  - name: Launch VMwareTools installation
+  - name: Launch VMwareTools Installation
     command: /tmp/vmware-tools-distrib/vmware-install.pl -d
   - name: Clean extracted folder
     file: path={{item}} state=absent
