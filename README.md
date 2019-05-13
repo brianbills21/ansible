@@ -4,3 +4,4 @@ httpd.yml
 vmwaretools.yml  
 kube-dependencies.yml  
 master.yml  
+workers.yml
