@@ -1,0 +1,183 @@
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-master
+
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-node01
+
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-node02
+
+login to all three and accept the fingerprint
+
+ansible 192.168.134.153 -m shell -a 'useradd centos'
+
+ssh-copy-id -i ~/.ssh/id_rsa.pub centos@kubernetes-master
+
+login and accept the fingerprint on the master
+
+ansible kubernetes -m shell -a 'swapoff -a'
+
+ansible kubernetes -m shell -a 'sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab'
+
+mkdir ~/kube-cluster
+
+cd ~/kube-cluster
+
+vi ~/kube-cluster/hosts
+
+[masters]
+kubernetes-master ansible_host=192.168.134.153 ansible_user=root
+
+[workers]
+kubernetes-node01 ansible_host=192.168.134.154 ansible_user=root
+kubernetes-node02 ansible_host=192.168.134.154 ansible_user=root
+
+vi ~/kube-cluster/kube-dependencies.yml
+
+- hosts: all
+  become: yes
+  tasks:
+   - name: install Docker
+     yum:
+       name: docker
+       state: present
+       update_cache: true
+
+   - name: start Docker
+     service:
+       name: docker
+       state: started
+
+   - name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+     sysctl:
+      name: net.bridge.bridge-nf-call-ip6tables
+      value: 1
+      state: present
+
+   - name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+     sysctl:
+      name: net.bridge.bridge-nf-call-iptables
+      value: 1
+      state: present
+
+   - name: add Kubernetes' YUM repository
+     yum_repository:
+      name: Kubernetes
+      description: Kubernetes YUM repository
+      baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      gpgcheck: yes
+
+   - name: install kubelet
+     yum:
+        name: kubelet-1.10.12
+        state: present
+        update_cache: true
+
+   - name: install kubeadm
+     yum:
+        name: kubeadm-1.10.12
+        state: present
+
+   - name: start kubelet
+     service:
+       name: kubelet
+       enabled: yes
+       state: started
+
+- hosts: kubernetes-master
+  become: yes
+  tasks:
+   - name: install kubectl
+     yum:
+        name: kubectl-1.10.12
+        state: present
+        allow_downgrade: yes
+	
+ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
+vi ~/kube-cluster/master.yml
+
+- hosts: kubernetes-master
+  become: yes
+  tasks:
+    - name: initialize the cluster
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: create .kube directory
+      become: yes
+      become_user: centos
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/centos/.kube/config
+        remote_src: yes
+        owner: centos
+
+    - name: install Pod network
+      become: yes
+      become_user: centos
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt
+		
+ansible-playbook -i hosts ~/kube-cluster/master.yml
+
+ssh centos@kubernetes-master
+
+kubectl get nodes
+
+back on centansible
+
+vi ~/kube-cluster/workers.yml
+
+- hosts: kubernetes-master
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+
+- hosts: workers
+  become: yes
+  tasks:
+    - name: join cluster
+      shell: "{{ hostvars['master'].join_command }} --ignore-preflight-errors all  >> node_joined.txt"
+      args:
+        chdir: $HOME
+        creates: node_joined.txt
+
+ansible-playbook -i hosts ~/kube-cluster/workers.yml
+
+ssh centos@kubernetes-master
+
+kubectl get nodes
+
+kubectl run nginx --image=nginx --port 80
+
+kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
+
+kubectl get services
+
+kubectl delete service nginx
+
+kubectl get services
+
+kubectl delete deployment nginx
+
+kubectl get deployments
+
+should see:
+
+No resources found.
