@@ -6,20 +6,6 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-node02
 
 login to all three and accept the fingerprint
 
-ansible 192.168.134.153 -m shell -a 'useradd centos'
-
-ssh-copy-id -i ~/.ssh/id_rsa.pub centos@kubernetes-master
-
-login and accept the fingerprint on the master
-
-ansible kubernetes -m shell -a 'swapoff -a'
-
-ansible kubernetes -m shell -a 'sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab'
-
-mkdir ~/kube-cluster
-
-cd ~/kube-cluster
-
 vi ~/kube-cluster/hosts
 
 [masters]
@@ -28,6 +14,21 @@ kubernetes-master ansible_host=192.168.134.153 ansible_user=root
 [workers]
 kubernetes-node01 ansible_host=192.168.134.154 ansible_user=root
 kubernetes-node02 ansible_host=192.168.134.154 ansible_user=root
+
+[ kubernetes ]
+kubernetes-master ansible_host=192.168.134.153 ansible_user=root
+kubernetes-node01 ansible_host=192.168.134.154 ansible_user=root
+kubernetes-node02 ansible_host=192.168.134.154 ansible_user=root
+
+ansible kubernetes-master -m shell -a 'useradd centos'
+
+ansible kubernetes -m shell -a 'swapoff -a'
+
+ansible kubernetes -m shell -a 'sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab'
+
+mkdir ~/kube-cluster
+
+cd ~/kube-cluster
 
 vi ~/kube-cluster/kube-dependencies.yml
 
@@ -92,6 +93,7 @@ vi ~/kube-cluster/kube-dependencies.yml
         allow_downgrade: yes
 	
 ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
+
 vi ~/kube-cluster/master.yml
 
 - hosts: kubernetes-master
