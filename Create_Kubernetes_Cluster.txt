@@ -6,6 +6,10 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-node02
 
 login to all three and accept the fingerprint
 
+mkdir ~/kube-cluster
+
+cd ~/kube-cluster
+
 vi ~/kube-cluster/hosts
 
 [masters]
@@ -25,10 +29,6 @@ ansible kubernetes-master -m shell -a 'useradd centos'
 ansible kubernetes -m shell -a 'swapoff -a'
 
 ansible kubernetes -m shell -a 'sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab'
-
-mkdir ~/kube-cluster
-
-cd ~/kube-cluster
 
 vi ~/kube-cluster/kube-dependencies.yml
 
