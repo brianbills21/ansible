@@ -1,5 +1,5 @@
 # ansible
-Ansible playbooks and scripts 
+Ansible playbooks and scripts  
 Create_Kubernetes_Cluster.txt   
 httpd.yml  
 vmwaretools.yml  
