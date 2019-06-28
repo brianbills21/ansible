@@ -17,12 +17,12 @@ kubernetes-master ansible_host=192.168.134.153 ansible_user=root
 
 [workers]
 kubernetes-node01 ansible_host=192.168.134.154 ansible_user=root
-kubernetes-node02 ansible_host=192.168.134.154 ansible_user=root
+kubernetes-node02 ansible_host=192.168.134.155 ansible_user=root
 
 [ kubernetes ]
 kubernetes-master ansible_host=192.168.134.153 ansible_user=root
 kubernetes-node01 ansible_host=192.168.134.154 ansible_user=root
-kubernetes-node02 ansible_host=192.168.134.154 ansible_user=root
+kubernetes-node02 ansible_host=192.168.134.155 ansible_user=root
 
 ansible kubernetes-master -m shell -a 'useradd centos'
 
