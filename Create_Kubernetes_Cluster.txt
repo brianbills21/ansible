@@ -1,4 +1,4 @@
-Testing my Jenkins Github configuration ***Test for Jenkins***
+Testing my Jenkins Github configuration ***Test for Jenkins*** ***Another little test***
 
 ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-master
 
