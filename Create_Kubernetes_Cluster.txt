@@ -12,7 +12,7 @@ mkdir ~/kube-cluster
 
 cd ~/kube-cluster
 
-vi ~/kube-cluster/hosts
+tee ~/kube-cluster/hosts <<EOF 
 
 [masters]
 kubernetes-master ansible_host=192.168.134.153 ansible_user=root
@@ -26,13 +26,15 @@ kubernetes-master ansible_host=192.168.134.153 ansible_user=root
 kubernetes-node01 ansible_host=192.168.134.154 ansible_user=root
 kubernetes-node02 ansible_host=192.168.134.155 ansible_user=root
 
+EOF
+
 ansible kubernetes-master -m shell -a 'useradd centos'
 
 ansible kubernetes -m shell -a 'swapoff -a'
 
 ansible kubernetes -m shell -a 'sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab'
 
-vi ~/kube-cluster/kube-dependencies.yml
+tee ~/kube-cluster/kube-dependencies.yml <<EOF
 
 - hosts: all
   become: yes
@@ -94,9 +96,11 @@ vi ~/kube-cluster/kube-dependencies.yml
         state: present
         allow_downgrade: yes
 	
+EOF
+	
 ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 
-vi ~/kube-cluster/master.yml
+tee ~/kube-cluster/master.yml <<EOF
 
 - hosts: kubernetes-master
   become: yes
@@ -129,6 +133,8 @@ vi ~/kube-cluster/master.yml
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
+	
+EOF
 		
 ansible-playbook -i hosts ~/kube-cluster/master.yml
 
@@ -138,7 +144,7 @@ kubectl get nodes
 
 back on centansible
 
-vi ~/kube-cluster/workers.yml
+tee ~/kube-cluster/workers.yml <<EOF
 
 - hosts: kubernetes-master
   become: yes
@@ -160,6 +166,8 @@ vi ~/kube-cluster/workers.yml
       args:
         chdir: $HOME
         creates: node_joined.txt
+	
+EOF
 
 ansible-playbook -i hosts ~/kube-cluster/workers.yml
 
@@ -181,6 +189,6 @@ kubectl delete deployment nginx
 
 kubectl get deployments
 
-should see:
+#should see:
 
-No resources found.
+#No resources found.
