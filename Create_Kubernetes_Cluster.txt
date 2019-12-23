@@ -1,4 +1,4 @@
-#Testing my Jenkins Github configuration ***Test for Jenkins*** ***Another little test***
+#Run this script on your ansible server
 
 ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-master
 
