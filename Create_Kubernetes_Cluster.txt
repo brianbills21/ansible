@@ -1,4 +1,4 @@
-#Run this script on your ansible server as root. Obviously, you need to personalize the $user variable and other such simple things.
+#Run this script on your ansible server as your normal user, you don't have to be root. Obviously, you need to personalize the $user variable and other such simple things.
 
 #Copy the rsa keys to the cluster hosts
 
