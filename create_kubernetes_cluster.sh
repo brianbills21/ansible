@@ -2,6 +2,8 @@
 #Obviously, you need to personalize the $user variable and other such simple things.
 #You should have already built three servers, kubernetes-master, kubernetes-node01, and kubernetes-node02.
 #Obviously the ip addresses in the ansible host file will possibly be different in your implementation.
+#Created a custom authorized_keys file under /home/bbills to copy to the remote servers, it's
+#just easier than copying the ~/.ssh/id_rsa.pub file, and then doing a cat .ssh/id_rsa.pub > .ssh/authorized_keys
 
 #Copy the rsa keys to the cluster hosts
 
