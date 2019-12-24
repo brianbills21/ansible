@@ -295,11 +295,7 @@ EOF
 		
 ansible-playbook -i hosts ~/kube-cluster/master.yml
 
-ssh centos@kubernetes-master
-
-kubectl get nodes
-
-back on centansible
+ssh centos@kubernetes-master "kubectl get nodes"
 
 tee ~/kube-cluster/workers.yml <<EOF
 
@@ -328,23 +324,10 @@ EOF
 
 ansible-playbook -i hosts ~/kube-cluster/workers.yml
 
-ssh centos@kubernetes-master
-
-kubectl get nodes
-
-kubectl run nginx --image=nginx --port 80
-
-kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
-
-kubectl get services
-
-kubectl delete service nginx
-
-kubectl get services
-
-kubectl delete deployment nginx
-
-kubectl get deployments
+ssh centos@kubernetes-master "kubectl get nodes && kubectl run nginx --image=nginx --port 80 \
+&& kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort && kubectl get services \
+&& kubectl delete service nginx && kubectl get services && kubectl delete deployment nginx && \
+kubectl get deployments"
 
 #should see:
 
