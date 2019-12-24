@@ -1,4 +1,7 @@
-#Run this script on your ansible server as your normal user, you don't have to be root. Obviously, you need to personalize the $user variable and other such simple things.
+#Run this script on your ansible server as your normal user, you don't have to be root. 
+#Obviously, you need to personalize the $user variable and other such simple things.
+#You should have already built three servers, kubernetes-master, kubernetes-node01, and kubernetes-node02.
+#Obviously the ip addresses in the ansible host file will possibly be different in your implementation.
 
 #Copy the rsa keys to the cluster hosts
 
