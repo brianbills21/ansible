@@ -121,7 +121,7 @@ mv-root-key $user $server $password
 
 done
 
-#login to all three and accept the fingerprint
+#Login to all three and accept the fingerprint
 
 for i in kubernetes-master, kubernetes-node01, kubernetes-node02; do
 
