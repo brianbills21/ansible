@@ -1,6 +1,6 @@
 #Run this script on your ansible server as root user.
 #In my case, when I kickstart my new hosts, there's already a default non-root user named "bbills".
-#And root's and bbills' rsa keys are already copied to the new hosts by a kickstart post install script.
+#And roots' and bbills' rsa keys are already copied to the new hosts by a kickstart post install script.
 #The expect code at the top is for you, in case you haven't already done that.
 #Obviously, you need to personalize the $user variable and other such simple things.
 #You should have already built three servers, kubernetes-master, kubernetes-node01, and kubernetes-node02.
