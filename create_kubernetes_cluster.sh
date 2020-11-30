@@ -16,7 +16,9 @@
 # Created a custom authorized_keys file under /home/bbills/expect_project to copy to the remote servers.    #
 #############################################################################################################
 
-#Copy the rsa keys to the cluster hosts
+##########################################
+# Copy the rsa keys to the cluster hosts #
+##########################################
 
 for i in kubernetes-master, kubernetes-node01, kubernetes-node02; do
 
@@ -175,13 +177,9 @@ first-login $user $server
 
 done
 
-#ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-master
-
-#ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-node01
-
-#ssh-copy-id -i ~/.ssh/id_rsa.pub root@kubernetes-node02
-
-#Make your playbook on the ansible server under your home dir
+################################################################
+# Make your playbook on the ansible server under your home dir #
+################################################################
 
 mkdir ~/kube-cluster
 
@@ -345,6 +343,8 @@ ssh centos@kubernetes-master "kubectl get nodes && kubectl run nginx --image=ngi
 && kubectl delete service nginx && kubectl get services && kubectl delete deployment nginx && \
 kubectl get deployments"
 
-#should see:
-
-#No resources found.
+#######################
+# should see:         #
+#                     #
+# No resources found. #
+#######################
