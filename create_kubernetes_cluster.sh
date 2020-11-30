@@ -45,7 +45,6 @@ expect {
 EOD
 }
 
-
 mv-root-key()
 {
 expect <<EOD
